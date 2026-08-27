@@ -30,12 +30,10 @@
             
             <div class="mb-4 text-left">
                 <label class="block text-sm font-medium text-slate-700 mb-1">Usuario o Correo</label>
-                <!-- ID agregado: user-input -->
                 <input type="text" id="user-input" placeholder="csuarez" class="w-full p-2.5 border border-slate-300 rounded-lg bg-slate-50 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition">
             </div>
             <div class="mb-4 text-left">
                 <label class="block text-sm font-medium text-slate-700 mb-1">Contraseña</label>
-                <!-- ID agregado: pass-input -->
                 <input type="password" id="pass-input" placeholder="********" class="w-full p-2.5 border border-slate-300 rounded-lg bg-slate-50 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition">
             </div>
             
@@ -44,7 +42,6 @@
                 <label for="recordar">Recordar sesión</label>
             </div>
 
-            <!-- ID agregado: btn-login -->
             <button id="btn-login" onclick="iniciarSesion()" class="w-full bg-teal-700 hover:bg-teal-800 text-white font-bold py-2.5 px-4 rounded-lg flex justify-center items-center gap-2 transition shadow-sm">
                 Ingresar <span class="material-symbols-outlined text-lg">login</span>
             </button>
@@ -70,9 +67,16 @@
                     <p id="dropdown-user-name" class="text-sm font-bold text-slate-800">Usuario</p>
                     <p id="dropdown-user-rol" class="text-xs text-slate-500 truncate">Rol</p>
                 </div>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"><span class="material-symbols-outlined text-[20px]">person</span> Mi Perfil</a>
-                <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition"><span class="material-symbols-outlined text-[20px]">help</span> Soporte</a>
+                <!-- 1. Enlace a Mi Perfil -->
+                <a href="perfil.html" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition">
+                    <span class="material-symbols-outlined text-[20px]">person</span> Mi Perfil
+                </a>
+                <!-- 2. Enlace a WhatsApp (Soporte) -->
+                <a href="https://wa.me/51922442738" target="_blank" class="flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition">
+                    <span class="material-symbols-outlined text-[20px]">help</span> Soporte
+                </a>
                 <div class="border-t border-slate-100"></div>
+                <!-- 3. Botón Cerrar Sesión -->
                 <button onclick="cerrarSesion()" class="w-full text-left flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition font-medium">
                     <span class="material-symbols-outlined text-[20px]">logout</span> Cerrar Sesión
                 </button>
@@ -83,15 +87,9 @@
     <!-- SIDEBAR (Menú Lateral Desplegable) -->
     <div id="sidebar-overlay" class="hidden fixed inset-0 bg-slate-900/50 z-40 transition-opacity" onclick="toggleSidebar()"></div>
     <aside id="sidebar" class="fixed top-0 left-0 h-full w-72 bg-white shadow-2xl z-50 transform -translate-x-full transition-transform duration-300 flex flex-col">
-        <div class="bg-slate-50 p-5 border-b border-slate-200 flex items-center gap-4">
-            <div id="sidebar-user-initials" class="w-12 h-12 bg-slate-400 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-inner">--</div>
-            <div>
-                <p id="sidebar-user-name" class="text-sm font-bold text-slate-800 leading-tight">Usuario</p>
-                <p id="sidebar-user-rol" class="text-xs text-teal-700 font-medium mt-1 bg-teal-50 px-2 py-0.5 rounded-full inline-block">Rol</p>
-            </div>
-        </div>
+        <!-- Bloque superior de usuario eliminado según requerimiento -->
         
-        <div class="p-4 flex-grow overflow-y-auto">
+        <div class="p-4 flex-grow overflow-y-auto mt-4">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Navegación</p>
             <button onclick="volverAProyectos(); toggleSidebar();" class="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-teal-700 bg-teal-50 rounded-lg transition mb-6">
                 <span class="material-symbols-outlined">business_center</span> Mis Proyectos
@@ -103,7 +101,7 @@
     <main id="bloque-proyectos" class="hidden flex-grow p-4 md:p-6 max-w-7xl mx-auto w-full">
         <div class="flex items-center gap-3 mb-6">
             <span class="material-symbols-outlined text-3xl text-teal-700">business_center</span>
-            <h1 class="text-2xl font-bold text-slate-800">Proyectos Asignados</h1>
+            <h1 class="text-2xl font-bold text-slate-800">Mis Proyectos</h1>
         </div>
 
         <!-- CONTENEDOR DINÁMICO DE PROYECTOS -->
@@ -133,9 +131,21 @@
     <!-- SCRIPT DE CONEXIÓN CON APPS SCRIPT (GITHUB PAGES) -->
     <script>
         // ⚠️ IMPORTANTE: REEMPLAZA ESTA URL POR LA TUYA QUE TERMINA EN /exec
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyJt_65bOpuT6ETrKJUGs0f-eqaCpZhwYIz-6rnrJ6bdSBPnsdBZ23K-sn5ydeeveUr/exec'; 
+        const API_URL = 'https://script.google.com/macros/s/AKfycby7aPz3PvaSQQUEtA1BENEezdOdfOB_ORA_h9adVxejPKbKD4BnTFAixgYvqIoxC4JX/exec'; 
         
         let usuarioActual = null;
+
+        // --- MANEJO DE CACHÉ AL CARGAR LA PÁGINA ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('indexCorp_user');
+            const savedPass = localStorage.getItem('indexCorp_pass');
+            
+            if(savedUser && savedPass) {
+                document.getElementById('user-input').value = savedUser;
+                document.getElementById('pass-input').value = savedPass;
+                document.getElementById('recordar').checked = true;
+            }
+        });
 
         // --- FUNCIÓN CENTRALIZADA PARA HABLAR CON LA BASE DE DATOS ---
         async function fetchAPI(payload) {
@@ -158,6 +168,7 @@
         async function iniciarSesion() {
             const usuario = document.getElementById('user-input').value.trim();
             const pass = document.getElementById('pass-input').value.trim();
+            const recordar = document.getElementById('recordar').checked;
             const btn = document.getElementById('btn-login');
             
             if(!usuario || !pass) {
@@ -177,16 +188,22 @@
             });
 
             if (respuesta.success) {
+                // Gestionar el caché si fue exitoso
+                if(recordar) {
+                    localStorage.setItem('indexCorp_user', usuario);
+                    localStorage.setItem('indexCorp_pass', pass);
+                } else {
+                    localStorage.removeItem('indexCorp_user');
+                    localStorage.removeItem('indexCorp_pass');
+                }
+
                 usuarioActual = respuesta.user;
                 const iniciales = usuarioActual.nombre.substring(0, 2).toUpperCase();
                 
                 // Actualizar UI con datos del usuario
                 document.getElementById('nav-user-initials').innerText = iniciales;
-                document.getElementById('sidebar-user-initials').innerText = iniciales;
                 document.getElementById('dropdown-user-name').innerText = usuarioActual.nombre;
-                document.getElementById('sidebar-user-name').innerText = usuarioActual.nombre;
                 document.getElementById('dropdown-user-rol').innerText = "Rol: " + usuarioActual.rol;
-                document.getElementById('sidebar-user-rol').innerText = "Rol: " + usuarioActual.rol;
                 
                 // Transición de pantallas
                 document.getElementById('bloque-login').classList.add('hidden');
@@ -205,7 +222,7 @@
         // --- 2. CARGAR PROYECTOS ---
         async function cargarProyectos() {
             const contenedor = document.getElementById('contenedor-proyectos');
-            contenedor.innerHTML = '<div class="col-span-full flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin">refresh</span> Cargando proyectos asignados...</div>';
+            contenedor.innerHTML = '<div class="col-span-full flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin">refresh</span> Cargando Mis Proyectos...</div>';
             
             const respuesta = await fetchAPI({ 
                 action: "getProyectos", 
@@ -255,10 +272,10 @@
             const contenedor = document.getElementById('contenedor-apps');
             contenedor.innerHTML = '<div class="col-span-full flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin">refresh</span> Consultando microservicios...</div>';
 
+            // Petición POST a tu API (ahora más limpia)
             const respuesta = await fetchAPI({ 
                 action: "getApps", 
-                idProyecto: idProyecto, 
-                appsPermitidas: usuarioActual.apps 
+                idProyecto: idProyecto 
             });
             
             if(respuesta.success) {
@@ -268,7 +285,7 @@
                 } else {
                     respuesta.data.forEach(a => {
                         html += `
-                        <button onclick="window.open('${a.url}', '_top')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-teal-300 transition-all flex flex-col items-center text-center group w-full">
+                        <button onclick="abrirApp('${a.archivoHtml}', '${a.url}')" class="bg-white rounded-xl p-6 shadow-sm border border-slate-200 hover:shadow-md hover:border-teal-300 transition-all flex flex-col items-center text-center group w-full">
                             <div class="w-16 h-16 bg-teal-50 text-teal-700 rounded-full flex items-center justify-center mb-4 group-hover:bg-teal-600 group-hover:text-white transition-colors">
                                 <span class="material-symbols-outlined text-3xl">${a.icono}</span>
                             </div>
@@ -290,8 +307,33 @@
             document.getElementById('nav-title').innerText = 'Mis Proyectos';
         }
 
+        // Función para Cerrar Sesión sin recargar la página
         function cerrarSesion() {
-            window.top.location.href = window.top.location.href.split('?')[0]; 
+            // 1. Ocultar el menú de usuario que quedó abierto
+            document.getElementById('user-menu').classList.add('hidden');
+
+            // 2. Limpiar la variable de seguridad
+            usuarioActual = null;
+            
+            // 3. Limpiar los contenedores
+            document.getElementById('contenedor-proyectos').innerHTML = '';
+            document.getElementById('contenedor-apps').innerHTML = '';
+            
+            // (Opcional) Si no quieres que recuerde la contraseña al cerrar sesión, descomenta la siguiente línea:
+            // document.getElementById('pass-input').value = ''; 
+
+            // 4. Restaurar el estado del botón de login
+            const btnLogin = document.getElementById('btn-login');
+            btnLogin.innerHTML = 'Ingresar <span class="material-symbols-outlined text-lg">login</span>';
+            btnLogin.disabled = false;
+
+            // 5. Ocultar las vistas de la aplicación
+            document.getElementById('navbar-global').classList.add('hidden');
+            document.getElementById('bloque-proyectos').classList.add('hidden');
+            document.getElementById('bloque-apps').classList.add('hidden');
+            
+            // 6. Mostrar nuevamente la pantalla de Login
+            document.getElementById('bloque-login').classList.remove('hidden');
         }
 
         function toggleSidebar() {
@@ -321,6 +363,16 @@
                     menu.classList.add('hidden');
                 }
             }
+        }
+
+        // --- ENRUTAMIENTO DINÁMICO DEFINITIVO ---
+        function abrirApp(archivoHtml, apiUrl) {
+            if (!archivoHtml || archivoHtml === "undefined") {
+                alert("Error: El archivo HTML de esta aplicación no está definido en el catálogo (Apps_Maestro).");
+                return;
+            }
+            // Abre el archivo exacto (ej. control_concreto.html) y le pega la URL del Sheet del proyecto
+            window.location.href = archivoHtml + "?api=" + encodeURIComponent(apiUrl);
         }
     </script>
 </body>
