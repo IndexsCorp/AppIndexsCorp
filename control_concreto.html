@@ -502,9 +502,23 @@
                         container.innerHTML = `<div class="col-span-full text-center py-8">No hay registros para ${dateFormatted}</div>`;
                         return;
                     }
+
+                    // --- NUEVO: Cálculo y visualización del total ---
+                    let totalM3 = 0;
+                    data.forEach(item => {
+                        const val = parseFloat(item.Parcial_G);
+                        if (!isNaN(val)) totalM3 += val;
+                    });
+                    
+                    const totalHeader = document.createElement('div');
+                    totalHeader.className = "col-span-full bg-teal-50 border border-teal-200 text-teal-800 p-4 rounded-xl flex justify-between items-center mb-4";
+                    totalHeader.innerHTML = `<span class="font-bold">Total del Día:</span><span class="text-xl font-black">${totalM3.toFixed(2)} m³</span>`;
+                    container.appendChild(totalHeader);
+                    // ------------------------------------------------
+
                     data.forEach(item => {
                         const card = document.createElement('div');
-                        card.className = "bg-white border rounded-xl p-4 cursor-pointer flex justify-between";
+                        card.className = "bg-white border rounded-xl p-4 cursor-pointer flex justify-between hover:border-teal-400 hover:shadow-md transition";
                         card.onclick = () => loadRecordForEdit(item);
                         card.innerHTML = `
                             <div>
@@ -765,7 +779,6 @@
             switchMixerTab('tab-registro-mixer');
         }
 
-        // --- NUEVO: LÓGICA DE BÚSQUEDA DE MIXERS ---
         function searchMixerByDate() {
             const dateFormatted = document.getElementById('searchDateMixer').value;
             if (!dateFormatted || dateFormatted.length !== 10) { alert("Formato requerido: DD/MM/YYYY"); return; }
@@ -776,7 +789,6 @@
             container.innerHTML = "";
             loading.classList.remove('hidden');
 
-            // Llamada al backend usando action=search_mixer
             fetch(`${GOOGLE_APP_URL}?action=search_mixer&fecha=${encodeURIComponent(dateFormatted)}`)
                 .then(res => res.json())
                 .then(data => {
@@ -790,12 +802,24 @@
                         return;
                     }
 
+                    // --- NUEVO: Cálculo y visualización del total ---
+                    let totalPedido = 0;
+                    data.forEach(item => {
+                        const val = parseFloat(item.Pedido);
+                        if (!isNaN(val)) totalPedido += val;
+                    });
+                    
+                    const totalHeader = document.createElement('div');
+                    totalHeader.className = "col-span-full bg-teal-50 border border-teal-200 text-teal-800 p-4 rounded-xl flex justify-between items-center mb-4";
+                    totalHeader.innerHTML = `<span class="font-bold">Total Ingresado:</span><span class="text-xl font-black">${totalPedido.toFixed(2)} m³</span>`;
+                    container.appendChild(totalHeader);
+                    // ------------------------------------------------
+
                     data.forEach(item => {
                         const card = document.createElement('div');
                         card.className = "bg-white border border-slate-200 hover:border-teal-400 hover:shadow-md rounded-xl p-4 cursor-pointer transition flex justify-between items-center group relative overflow-hidden";
                         card.onclick = () => loadRecordForEditMixer(item);
                         
-                        // Etiqueta visual si tiene ensayo
                         let ensayoTag = item.Ensayo === 'Si' ? `<div class="absolute top-0 right-0 bg-yellow-100 text-yellow-700 text-[9px] font-bold px-2 py-1 rounded-bl-lg">CON ENSAYO</div>` : '';
                         
                         card.innerHTML = `

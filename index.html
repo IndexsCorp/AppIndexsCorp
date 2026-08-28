@@ -251,7 +251,7 @@
                                 <span class="material-symbols-outlined text-[16px]">location_on</span> ${p.ubicacion}
                             </p>
                             <button onclick="abrirProyecto('${p.id}', '${p.nombre}')" class="w-full bg-slate-50 hover:bg-teal-50 text-teal-700 border border-slate-200 hover:border-teal-200 font-bold py-2 rounded-lg transition flex justify-center items-center gap-2 text-sm">
-                                <span class="material-symbols-outlined text-[18px]">apps</span> Ver Microservicios
+                                <span class="material-symbols-outlined text-[18px]">apps</span> Ver Aplicaciones
                             </button>
                         </div>`;
                     });
@@ -267,10 +267,10 @@
             document.getElementById('bloque-proyectos').classList.add('hidden');
             document.getElementById('bloque-apps').classList.remove('hidden');
             document.getElementById('nombre-proyecto-apps').innerText = `[${idProyecto}] ${nombreProyecto}`;
-            document.getElementById('nav-title').innerText = 'Microservicios';
+            document.getElementById('nav-title').innerText = 'Aplicaciones';
             
             const contenedor = document.getElementById('contenedor-apps');
-            contenedor.innerHTML = '<div class="col-span-full flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin">refresh</span> Consultando microservicios...</div>';
+            contenedor.innerHTML = '<div class="col-span-full flex items-center gap-2 text-slate-500"><span class="material-symbols-outlined animate-spin">refresh</span> Consultando aplicaciones...</div>';
 
             // Petición POST a tu API (ahora más limpia)
             const respuesta = await fetchAPI({ 
