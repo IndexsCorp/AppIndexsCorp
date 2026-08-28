@@ -417,6 +417,38 @@
             window.location.href = "index.html"; // Regresa al login
         }
 
+        // --- NUEVO: CARGAR LISTAS DESPLEGABLES DESDE BD_CONFIG ---
+        async function loadConfigData() {
+            if (!GOOGLE_APP_URL) return;
+            try {
+                const res = await fetch(`${GOOGLE_APP_URL}?action=get_config`);
+                const config = await res.json();
+
+                // Función auxiliar para rellenar los <select>
+                const populateSelect = (id, optionsArray) => {
+                    const select = document.getElementById(id);
+                    if (!select) return;
+                    select.innerHTML = ''; // Limpiamos las opciones fijas
+                    optionsArray.forEach(opt => {
+                        const option = document.createElement('option');
+                        option.value = opt;
+                        option.textContent = opt;
+                        select.appendChild(option);
+                    });
+                };
+
+                // Llenamos todas las listas de Metrados y Mixers
+                populateSelect('Tipo_Concreto', config.tiposConcreto);
+                populateSelect('Tipo_Mixer', config.tiposConcreto); // Mixers usa la misma lista
+                populateSelect('Tipo_Elemento', config.tiposElemento);
+                populateSelect('Etapa', config.etapas);
+                populateSelect('Nivel', config.niveles);
+
+            } catch (error) {
+                console.error("Error cargando las listas desplegables:", error);
+            }
+        }
+
         // GESTIÓN DE MÓDULOS PRINCIPALES
         function switchModule(moduleName) {
             document.querySelectorAll('.module-content').forEach(el => el.classList.remove('active'));
@@ -457,6 +489,7 @@
         }
 
         window.onload = () => {
+            loadConfigData(); // <--- NUEVO: Carga las listas de Bd_Config
             resetForm();
             resetFormMixer();
             applyDateMask(document.getElementById('Fecha_Semana'));
@@ -724,62 +757,7 @@
             .finally(() => { submitBtn.disabled = false; submitBtn.innerHTML = originalText; });
         });
 
-        // --- CARGAR REGISTRO DE MIXER PARA EDITAR ---
-        function loadRecordForEditMixer(item) {
-            document.getElementById('form-mode-ingreso').value = 'update';
-            document.getElementById('form-title-mixer').innerText = 'Modificar Ingreso: ' + item.Guia;
-            document.getElementById('form-icon-mixer').innerText = 'edit_note';
-            
-            const btn = document.getElementById('btnSubmitMixer');
-            btn.innerHTML = 'Actualizar Ingreso <span class="material-symbols-outlined text-lg">update</span>';
-            btn.classList.replace('bg-teal-700', 'bg-indigo-600');
-            btn.classList.replace('hover:bg-teal-800', 'hover:bg-indigo-700');
-            
-            document.getElementById('btnCancelEditMixer').classList.remove('hidden');
-            
-            if (item.Fecha_Semana && String(item.Fecha_Semana).includes('T')) {
-                const parts = String(item.Fecha_Semana).split('T')[0].split('-'); 
-                if (parts.length === 3) item.Fecha_Semana = `${parts[2]}/${parts[1]}/${parts[0]}`; 
-            } else if (item.Fecha_Semana && String(item.Fecha_Semana).includes('-')) {
-                 const parts = String(item.Fecha_Semana).split('-');
-                 if (parts.length === 3 && parts[0].length === 4) item.Fecha_Semana = `${parts[2]}/${parts[1]}/${parts[0]}`;
-            }
-
-            document.getElementById('ID_Ingreso').value = item.ID_Ingreso || "";
-            document.getElementById('Tipo_Mixer').value = item.Tipo || "";
-            document.getElementById('Semana_Mixer').value = item.Semana || "";
-            document.getElementById('Fecha_Semana_Mixer').value = item.Fecha_Semana || "";
-            document.getElementById('Pedido').value = item.Pedido || "";
-            document.getElementById('Guia').value = item.Guia || "";
-            
-            const timeFields = ['Hora_SalidaPlanta', 'Hora_LlegadaObra', 'Hora_InicioVaciado', 'Hora_FinVaciado'];
-            timeFields.forEach(tf => {
-                let timeVal = item[tf];
-                if (timeVal && String(timeVal).includes('T')) {
-                    timeVal = String(timeVal).split('T')[1].substring(0, 5); 
-                }
-                document.getElementById(tf).value = timeVal || "";
-            });
-
-            document.getElementById('Ensayo').value = item.Ensayo || "No";
-            document.getElementById('Id_Probeta').value = item.Id_Probeta || "";
-            
-            // DESCONCATENACIÓN DE PERIODOS ("7 y 28" -> input 1 y input 2)
-            let p1 = "", p2 = "";
-            if (item.Periodos_Ensayos) {
-                // Extrae solo los números del texto usando Expresiones Regulares
-                let numeros = String(item.Periodos_Ensayos).match(/\d+/g);
-                if (numeros && numeros.length > 0) p1 = numeros[0];
-                if (numeros && numeros.length > 1) p2 = numeros[1];
-            }
-            document.getElementById('Periodo_1').value = p1;
-            document.getElementById('Periodo_2').value = p2;
-            
-            toggleEnsayoFields();
-            switchMixerTab('tab-registro-mixer');
-        }
-
-        function searchMixerByDate() {
+                function searchMixerByDate() {
             const dateFormatted = document.getElementById('searchDateMixer').value;
             if (!dateFormatted || dateFormatted.length !== 10) { alert("Formato requerido: DD/MM/YYYY"); return; }
 
@@ -876,12 +854,10 @@
             document.getElementById('Guia').value = item.Guia || "";
             
             // Los campos de tiempo suelen llegar como un Date gigante de Google Sheets si tienen fecha incluida
-            // Hacemos una limpieza simple por si vienen en formato ISO (T14:30:00.000Z)
             const timeFields = ['Hora_SalidaPlanta', 'Hora_LlegadaObra', 'Hora_InicioVaciado', 'Hora_FinVaciado'];
             timeFields.forEach(tf => {
                 let timeVal = item[tf];
                 if (timeVal && String(timeVal).includes('T')) {
-                    // Extraer "14:30" de "1899-12-30T14:30:00.000Z"
                     timeVal = String(timeVal).split('T')[1].substring(0, 5); 
                 }
                 document.getElementById(tf).value = timeVal || "";
@@ -889,13 +865,37 @@
 
             document.getElementById('Ensayo').value = item.Ensayo || "No";
             document.getElementById('Id_Probeta').value = item.Id_Probeta || "";
-            document.getElementById('Periodo_1').value = item.Periodo_1 || "";
-            document.getElementById('Periodo_2').value = item.Periodo_2 || "";
+            
+            // ========================================================
+            // DESCONCATENACIÓN BLINDADA DE PERIODOS
+            // ========================================================
+            let p1 = "", p2 = "";
+            
+            // Estrategia 1: Buscar cualquier columna que contenga la palabra "Periodo"
+            let keyPeriodos = Object.keys(item).find(k => String(k).toLowerCase().includes("periodo"));
+            let textoPeriodos = keyPeriodos ? item[keyPeriodos] : null;
+
+            // Estrategia 2: Si no lo encuentra por nombre, toma la columna 13 (índice 12) a la fuerza
+            if (!textoPeriodos) {
+                const llaves = Object.keys(item);
+                if (llaves.length >= 13) {
+                    textoPeriodos = item[llaves[12]];
+                }
+            }
+
+            // Si encontró el texto (ej. "7 y 28"), extrae los números matemáticamente
+            if (textoPeriodos) {
+                let numeros = String(textoPeriodos).match(/\d+/g);
+                if (numeros && numeros.length > 0) p1 = numeros[0];
+                if (numeros && numeros.length > 1) p2 = numeros[1];
+            }
+            
+            document.getElementById('Periodo_1').value = p1;
+            document.getElementById('Periodo_2').value = p2;
             
             toggleEnsayoFields();
             switchMixerTab('tab-registro-mixer');
         }
-
     </script>
 </body>
 </html>
