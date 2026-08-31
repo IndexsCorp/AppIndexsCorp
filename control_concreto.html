@@ -443,18 +443,19 @@
                 <form id="probetaForm" class="space-y-6">
                     <input type="hidden" id="Probeta_FilaFisica" name="filaFisica">
                     <input type="hidden" id="Probeta_FcBase" name="fcBase">
-                    
-                    <!-- NUEVOS CAMPOS OCULTOS PARA EL NOMBRE DEL PDF -->
-                    <input type="hidden" id="Probeta_FechaSemana" name="fechaSemana">
                     <input type="hidden" id="Probeta_DiasEnsayos" name="diasEnsayos">
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
                         <div>
                             <label class="block text-xs font-semibold text-slate-600 mb-1">ID Probeta</label>
                             <input type="text" id="Probeta_ID" name="idProbeta" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500 font-mono">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha de Rotura (Modificable)</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha Vaciado (Modificable)</label>
+                            <input type="text" id="Probeta_FechaSemana" name="fechaSemana" placeholder="DD/MM/YYYY" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Fecha Rotura (Modificable)</label>
                             <input type="text" id="Probeta_FechaRotura" name="fechaRotura" placeholder="DD/MM/YYYY" class="w-full p-2.5 text-sm border border-slate-300 rounded-lg outline-none focus:border-indigo-500">
                         </div>
                         <div>
@@ -1023,6 +1024,8 @@
         window.addEventListener('DOMContentLoaded', () => {
             if(document.getElementById('searchDateProbeta')) applyDateMask(document.getElementById('searchDateProbeta'));
             if(document.getElementById('Probeta_FechaRotura')) applyDateMask(document.getElementById('Probeta_FechaRotura'));
+            // Agregar esta nueva línea:
+            if(document.getElementById('Probeta_FechaSemana')) applyDateMask(document.getElementById('Probeta_FechaSemana'));
         });
 
         function switchProbetaTab(tabId) {
