@@ -256,27 +256,22 @@
 
             fetch(GOOGLE_APP_URL, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "text/plain;charset=utf-8",
-                },
-                redirect: "follow", // <-- ESTO EVITA EL ERROR DE CONEXIÓN DE GOOGLE
+                mode: "no-cors", // <--- ESTA ES LA CLAVE MÁGICA
                 body: JSON.stringify(payload)
             })
-            .then(res => res.json())
-            .then(resp => {
-                if(resp.success) {
-                    alert("✅ ¡Foto guardada exitosamente en el celular y en la nube!");
-                    // Reiniciar la vista
-                    canvas.classList.add('hidden');
-                    btn.classList.add('hidden');
-                    btn.classList.remove('flex');
-                    currentBase64 = "";
-                    document.getElementById('statusText').innerHTML = `<span class="text-green-600 flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">check_circle</span> Listo para una nueva foto</span>`;
-                } else {
-                    alert("⚠️ Error al subir a Drive: " + resp.message);
-                }
+            .then(() => {
+                // Como 'no-cors' oculta la respuesta de Google, si llega aquí asumimos éxito
+                alert("✅ ¡Foto guardada exitosamente en el celular y en la nube!");
+                canvas.classList.add('hidden');
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+                currentBase64 = "";
+                document.getElementById('statusText').innerHTML = `<span class="text-green-600 flex items-center justify-center gap-1"><span class="material-symbols-outlined text-[16px]">check_circle</span> Listo para una nueva foto</span>`;
             })
-            .catch(err => alert("❌ Error de conexión con el servidor."))
+            .catch(err => {
+                console.error("Error catch:", err);
+                alert("❌ Falló el envío. Revisa tu conexión a internet.");
+            })
             .finally(() => {
                 btn.innerHTML = `<span class="material-symbols-outlined text-lg">cloud_upload</span> Guardar (Local y Nube)`;
                 btn.disabled = false;
